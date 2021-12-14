@@ -1,0 +1,81 @@
+- hosts: localhost
+  gather_facts: no
+  vars_files:
+    - cred.yml
+  tasks:
+
+  - name: Ensure boto3 is installed
+    pip:
+      name: boto3
+      state: present
+
+  - name: Creating security group for buildserver
+    ec2_group:
+      name: BUILD_SG
+      description: SG for buildserver allowing ssh port
+      region: us-east-2
+      aws_acces_key: "{{ access_key }}"
+      aws_secret_key: "{{ secret_key }}"
+      rules:
+        - proto: tcp
+          from_port: 22
+          to_port: 22
+          cidr_ip: 0.0.0.0/0
+      rules_egress:
+        - proto: all
+          cidr_ip: 0.0.0.0/0
+
+  - name: Creating security group for prod vm
+    ec2_group:
+      name: PROD_SG
+      description: SG for prod vm allowing 8080 port
+      region: us-east-2
+      aws_acces_key: "{{ access_key }}"
+      aws_secret_key: "{{ secret_key }}"
+      rules:
+        - proto: tcp
+          from_port: 8080
+          to_port: 8080
+          cidr_ip: 0.0.0.0/0
+      rules_egress:
+        - proto: all
+          cidr_ip: 0.0.0.0/0
+
+  - name: launching ec2 instance fot build vm
+    ec2:
+        key_name: my-key13
+        instance_type: t2.micro
+        image: ami-0ba62214afa52bec7
+        wait: true
+        group: BUILD_SG
+        count: 1
+        assign_public_ip: yes
+        region: us-east-2
+        state: present
+        aws_acces_key: "{{ access_key }}"
+        aws_secret_key: "{{ secret_key }}"
+        instance_tags:
+          Name: buildserver
+        register: ec2_build
+
+  - name: Add build instance to host group
+    add_host:
+      hostname: "{{ item.public_ip }}"
+      groupname: buildserver
+    loop: "{{ ec2_build.instances }}"
+
+  - name: Wait for SSH to come up
+    wait_for:
+      host: "{{ item.public_dns_name }}"
+      port: 22
+      state: started
+    loop: "{{ ec2_build.instances }}"
+
+
+- hosts: buildserver
+  gather_facts: no
+  tasks:
+    - name: build role
+      include_role:
+        name: build
+
