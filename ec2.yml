@@ -74,8 +74,8 @@
 
 - hosts: buildserver
   gather_facts: no
-  tasks:
-    - name: build role
-      include_role:
-        name: build
+  roles:
+    - common
+    - build
+
 
