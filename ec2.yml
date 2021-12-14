@@ -8,6 +8,7 @@
     apt:
       name: "{{item}}"
       state: present
+      update_cache: yes
     with_items:
       - python-pip
       - python-setuptools
@@ -53,7 +54,7 @@
     ec2:
         key_name: my-key13
         instance_type: t2.micro
-        image: ami-0ba62214afa52bec7
+        image: ami-03a0c45ebc70f98ea
         wait: true
         group: BUILD_SG
         count: 1
