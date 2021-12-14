@@ -1,2 +1,47 @@
 ---
 # tasks file for build
+
+- name: ensure recuired packages are installed
+  apt:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - default-jdk
+    - maven
+
+- name: ensure package folder exists
+  file:
+    path: "{{ package_folder }}"
+    state: directory
+    mode: '0777'
+
+- name: clone git repo with java app code
+  git:
+    repo: http://github.com/efsavage/hello-world-war.git
+    dest: "{{ package_folder }}"
+
+- name: package java app
+  shell:
+    cmd: mvn package
+    chdir: "{{ package_folder }}"
+
+- name: ensure Dockerfile exists
+  copy:
+    src: Dockerfile
+    dest: "{{ package_folder }}"
+
+- name: login into dockerhub
+  docker_login:
+    email: "{{ email }}"
+    username: "{{ username }}"
+    password: "{{ password }}"
+    reauthorize: yes
+
+- name: build docker image
+  docker_image:
+    path: "{{ package_folder }}"
+    name: dlmurga/app_ds13
+    push: yes
+    nocache: yes
+    buildargs:
+      package_folder: "{{ package_folder }}"
