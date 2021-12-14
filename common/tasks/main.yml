@@ -1,2 +1,15 @@
 ---
 # tasks file for common
+
+- name: ensure recuired packages are installed
+  apt:
+    name: "{{item}}"
+    state: present
+  with_items:
+    - python-pip
+    - python-setuptools
+    - virtualenv
+    - docker-ce
+- name : ensure docker Python module is installed
+  pip:
+    name: docker
