@@ -3,22 +3,37 @@
 
 - name: ensure recuired packages are installed
   apt:
-    name: ['default-jdk', 'tomcat9', 'python-pip', 'python3-pip']
+    name: ['docker-ce', 'python-pip', 'python3-pip']
     state: present
     update_cache: yes
 
-- name: Ensure boto is installed
+- name: Ensure required python modules are installed
   pip:
     name:
       - boto
       - boto3
+      - docker
     state: present
+
+- name: ensure app folder exists
+  file:
+    path: /app_folder
+    state: directory
+    mode: '0777'
 
 - name: copying java app from aws s3
   aws_s3:
     bucket: java-app-ds13
     object: hello-world-war-1.0.0.war
-    dest: /var/lib/tomcat9/webapps/hello-world-war-1.0.0.war
+    dest: /app_folder/hello-world-war-1.0.0.war
     mode: get
     aws_access_key: "{{ access_key }}"
     aws_secret_key: "{{ secret_key }}"
+
+- name:
+    docker_container:
+      name: java_app_tomcat
+      image: tomcat:jre8-alpine
+      volumes: /app_folder:/usr/local/tomcat/webapps
+      ports:
+        "8080:8080"
