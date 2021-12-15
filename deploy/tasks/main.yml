@@ -1,2 +1,24 @@
 ---
 # tasks file for deploy
+
+- name: ensure recuired packages are installed
+  apt:
+    name: ['default-jdk', 'tomcat9', 'python-pip', 'python3-pip']
+    state: present
+    update_cache: yes
+
+- name: Ensure boto is installed
+  pip:
+    name:
+      - boto
+      - boto3
+    state: present
+
+- name: copying java app from aws s3
+  aws_s3:
+    bucket: java-app-ds13
+    object: hello-world-war-1.0.0.war
+    dest: /var/lib/tomcat9/webapps/
+    mode: get
+    aws_access_key: "{{ access_key }}"
+    aws_secret_key: "{{ secret_key }}"
