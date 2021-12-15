@@ -7,10 +7,10 @@
     state: present
     update_cache: yes
 
-  - name: Ensure boto is installed
-    pip:
-      name: ['boto', 'boto3']
-      state: present
+- name: Ensure boto is installed
+  pip:
+    name: ['boto', 'boto3']
+    state: present
 
 - name: ensure package folder exists
   file:
