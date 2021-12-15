@@ -18,7 +18,7 @@
   aws_s3:
     bucket: java-app-ds13
     object: hello-world-war-1.0.0.war
-    dest: /var/lib/tomcat9/webapps/
+    dest: /var/lib/tomcat9/webapps/hello-world-war-1.0.0.war
     mode: get
     aws_access_key: "{{ access_key }}"
     aws_secret_key: "{{ secret_key }}"
