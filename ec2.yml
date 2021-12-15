@@ -12,7 +12,7 @@
 
   - name: Creating empty bucket
     aws_s3:
-      bucket: java_app_ds13
+      bucket: java-app-ds13
       mode: create
       aws_access_key: "{{ access_key }}"
       aws_secret_key: "{{ secret_key }}"
