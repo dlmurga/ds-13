@@ -5,11 +5,6 @@
 
   tasks:
 
-  - name: Ensure boto3 is installed
-    pip:
-      name: boto3
-      state: present
-
   - name: Creating empty bucket
     aws_s3:
       bucket: java-app-ds13
