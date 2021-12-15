@@ -17,10 +17,10 @@
       aws_access_key: "{{ access_key }}"
       aws_secret_key: "{{ secret_key }}"
 
-  - name: Creating security group for buildserver
+  - name: Creating security group for SSH
     ec2_group:
-      name: BUILD_SG
-      description: SG for buildserver allowing ssh port
+      name: ssh_sg
+      description: SG allowing ssh port
       region: us-east-2
       aws_access_key: "{{ access_key }}"
       aws_secret_key: "{{ secret_key }}"
@@ -33,10 +33,10 @@
         - proto: all
           cidr_ip: 0.0.0.0/0
 
-  - name: Creating security group for prod vm
+  - name: Creating security group for tomcat
     ec2_group:
-      name: PROD_SG
-      description: SG for prod vm allowing 8080 port
+      name: tomcat_sg
+      description: SG allowing 8080 port
       region: us-east-2
       aws_access_key: "{{ access_key }}"
       aws_secret_key: "{{ secret_key }}"
@@ -49,13 +49,13 @@
         - proto: all
           cidr_ip: 0.0.0.0/0
 
-  - name: launching ec2 instance for build vm
+  - name: launching ec2 instance for buildserver
     ec2:
         key_name: my-key13
         instance_type: t2.micro
         image: ami-03a0c45ebc70f98ea
         wait: true
-        group: BUILD_SG
+        group: ssh_sg
         count: 1
         assign_public_ip: yes
         vpc_subnet_id: subnet-0ccd529e69a92ed52
@@ -67,23 +67,56 @@
           Name: buildserver
     register: ec2_build
 
-  - name: Add build instance to host group
+  - name: Add buildserver instance to host group
     add_host:
       hostname: "{{ item.public_ip }}"
       groupname: buildserver
     loop: "{{ ec2_build.instances }}"
 
-  - name: Wait for SSH to come up
+  - name: Wait for SSH to come up on buildserver
     wait_for:
       host: "{{ item.public_dns_name }}"
       port: 22
       state: started
     loop: "{{ ec2_build.instances }}"
 
+  - name: launching ec2 instance for prodserver
+    ec2:
+        key_name: my-key13
+        instance_type: t2.micro
+        image: ami-03a0c45ebc70f98ea
+        wait: true
+        group: ['ssh_sg', 'tomcat_sg']
+        count: 1
+        assign_public_ip: yes
+        vpc_subnet_id: subnet-0ccd529e69a92ed52
+        region: us-east-2
+        state: present
+        aws_access_key: "{{ access_key }}"
+        aws_secret_key: "{{ secret_key }}"
+        instance_tags:
+          Name: prodserver
+    register: ec2_prod
+
+  - name: Add prodserver instance to host group
+    add_host:
+      hostname: "{{ item.public_ip }}"
+      groupname: buildserver
+    loop: "{{ ec2_prod.instances }}"
+
+  - name: Wait for SSH to come up on prodserver
+    wait_for:
+      host: "{{ item.public_dns_name }}"
+      port: 22
+      state: started
+    loop: "{{ ec2_prod.instances }}"
 
 - hosts: buildserver
-  gather_facts: no
   roles:
     - build
+
+- hosts: prodserver
+  roles:
+    - deploy
 
 
