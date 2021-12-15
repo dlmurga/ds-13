@@ -31,7 +31,7 @@
       name: PROD_SG
       description: SG for prod vm allowing 8080 port
       region: us-east-2
-      aws_acces_key: "{{ access_key }}"
+      aws_access_key: "{{ access_key }}"
       aws_secret_key: "{{ secret_key }}"
       rules:
         - proto: tcp
@@ -53,7 +53,7 @@
         assign_public_ip: yes
         region: us-east-2
         state: present
-        aws_acces_key: "{{ access_key }}"
+        aws_access_key: "{{ access_key }}"
         aws_secret_key: "{{ secret_key }}"
         instance_tags:
           Name: buildserver
