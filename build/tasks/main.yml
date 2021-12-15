@@ -14,24 +14,24 @@
 
 - name: ensure package folder exists
   file:
-    path: "{{ package_folder }}"
+    path: /package_folder
     state: directory
     mode: '0777'
 
 - name: clone git repo with java app code
   git:
     repo: http://github.com/efsavage/hello-world-war.git
-    dest: "{{ package_folder }}"
+    dest: /package_folder
 
 - name: package java app
   shell:
     cmd: mvn package
-    chdir: "{{ package_folder }}"
+    chdir: /package_folder
 
 - name: copying java app to aws s3
   aws_s3:
     bucket: java-app-ds13
-    src: "{{ package_folder }}"/target/hello-world-war-1.0.0.war
+    src: /package_folder/target/hello-world-war-1.0.0.war
     object: hello-world-war-1.0.0.war
     aws_access_key: "{{ access_key }}"
     aws_secret_key: "{{ secret_key }}"
