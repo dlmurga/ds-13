@@ -24,24 +24,3 @@
   shell:
     cmd: mvn package
     chdir: "{{ package_folder }}"
-
-- name: ensure Dockerfile exists
-  copy:
-    src: Dockerfile
-    dest: "{{ package_folder }}"
-
-- name: login into dockerhub
-  docker_login:
-    email: "{{ email }}"
-    username: "{{ username }}"
-    password: "{{ password }}"
-    reauthorize: yes
-
-- name: build docker image
-  docker_image:
-    path: "{{ package_folder }}"
-    name: dlmurga/app_ds13
-    push: yes
-    nocache: yes
-    buildargs:
-      package_folder: "{{ package_folder }}"
