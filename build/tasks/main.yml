@@ -3,7 +3,7 @@
 
 - name: ensure recuired packages are installed
   apt:
-    name: ['default-jdk', 'maven', 'python-pip']
+    name: ['default-jdk', 'maven', 'python-pip', 'python3-pip']
     state: present
     update_cache: yes
 
