@@ -31,9 +31,9 @@
     aws_secret_key: "{{ secret_key }}"
 
 - name:
-    docker_container:
-      name: java_app_tomcat
-      image: tomcat:jre8-alpine
-      volumes: /app_folder:/usr/local/tomcat/webapps
-      ports:
-        "8080:8080"
+  docker_container:
+    name: java_app_tomcat
+    image: tomcat:jre8-alpine
+    volumes: /app_folder:/usr/local/tomcat/webapps
+    ports:
+      "8080:8080"
