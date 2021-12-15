@@ -51,6 +51,7 @@
         group: BUILD_SG
         count: 1
         assign_public_ip: yes
+        vpc_subnet_id: subnet-0ccd529e69a92ed52
         region: us-east-2
         state: present
         aws_access_key: "{{ access_key }}"
