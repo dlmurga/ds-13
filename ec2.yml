@@ -57,7 +57,7 @@
         aws_secret_key: "{{ secret_key }}"
         instance_tags:
           Name: buildserver
-        register: ec2_build
+    register: ec2_build
 
   - name: Add build instance to host group
     add_host:
