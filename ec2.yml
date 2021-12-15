@@ -15,7 +15,7 @@
       name: BUILD_SG
       description: SG for buildserver allowing ssh port
       region: us-east-2
-      aws_acces_key: "{{ access_key }}"
+      aws_access_key: "{{ access_key }}"
       aws_secret_key: "{{ secret_key }}"
       rules:
         - proto: tcp
