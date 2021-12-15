@@ -2,16 +2,8 @@
   gather_facts: no
   vars_files:
     - cred.yml
-  tasks:
 
-  - name: ensure recuired packages are installed
-    apt:
-      name: "{{item}}"
-      state: present
-      update_cache: yes
-    with_items:
-      - python-pip
-      - python-setuptools
+  tasks:
 
   - name: Ensure boto3 is installed
     pip:
