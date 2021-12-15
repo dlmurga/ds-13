@@ -10,6 +10,13 @@
       name: boto3
       state: present
 
+  - name: Creating empty bucket
+    aws_s3:
+      bucket: java_app
+      mode: create
+      aws_access_key: "{{ access_key }}"
+      aws_secret_key: "{{ secret_key }}"
+
   - name: Creating security group for buildserver
     ec2_group:
       name: BUILD_SG
@@ -42,7 +49,7 @@
         - proto: all
           cidr_ip: 0.0.0.0/0
 
-  - name: launching ec2 instance fot build vm
+  - name: launching ec2 instance for build vm
     ec2:
         key_name: my-key13
         instance_type: t2.micro
@@ -77,7 +84,6 @@
 - hosts: buildserver
   gather_facts: no
   roles:
-    - common
     - build
 
 
