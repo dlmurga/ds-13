@@ -96,7 +96,7 @@
   - name: Add prodserver instance to host group
     add_host:
       hostname: "{{ item.public_ip }}"
-      groupname: buildserver
+      groupname: prodserver
     loop: "{{ ec2_prod.instances }}"
 
   - name: Wait for SSH to come up on prodserver
